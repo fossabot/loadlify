@@ -19,7 +19,7 @@ var loaderDefs={
 	sha256: props.prefijo+"js-sha256/build/sha256.min.js",
 	AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
 	listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
-	typedJS: "lib/typedjs/lib/typed.min.js",
+	typedJS: props.prefijo"typedjs/lib/typed.min.js",
 	openpgp: props.prefijo+"openpgp/dist/openpgp.min.js",
 	test: "test.js"
 }
