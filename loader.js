@@ -79,41 +79,26 @@ function load(a){
         return c;
     }
     function init(a){
-        if(a==undefined){
-            return;
-        }
-        if(typeof a == "string"){
-            if(loaderLoaded.indexOf(a)==-1){
+        return new Promise((resolver, recahzar)=>{
+            if(a==undefined){
+                resolver(a);
+            }
+            if(typeof a == "string"){
                 if(loaderDefs.hasOwnProperty(a)){
-                    return pre(loaderDefs[a]);
+                    if(loaderLoaded.indexOf(loaderDefs[a])>-1) return resolver(loaderDefs[a]);
+                    return resolver(pre(loaderDefs[a]));
                 }else{
-                    return pre(props.prefijo+a);
+                    if(loaderLoaded.indexOf(props.prefijo+a)>-1) return props.prefijo+a;
+                    return resolver(pre(props.prefijo+a));
                 }
             }else{
-                return true;
+                let c=[];
+                a.forEach(b=>{
+                    c.push(init(b));
+                });
+                Promise.all(c).then(resolver);
             }
-        }else{
-			return new Promise((resolver, rechazar)=>{
-				$.each(a, (k, v)=>{
-					if(typeof v != "string"){
-						init(v);
-						return;
-					}
-					let url;
-					if(loaderDefs.hasOwnProperty(v)){
-						url=loaderDefs[v];
-					}else{
-						url=props.prefijo+v;
-					}
-					if(loaderLoaded.indexOf(url)==-1){
-						return pre(url);
-					}else{
-						return true;
-					}
-				});
-				resolver(a);
-			});
-        }
+        });
     }
     if(typeof a=="string"){
 		if(deps(a)!=undefined){
