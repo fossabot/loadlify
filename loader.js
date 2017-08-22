@@ -32,6 +32,7 @@ var loaderLoaded=[];
 function load(a){
 	function loadjs(a){
 		return fetch(a).then(b=>{
+            if(b.ok!=true) throw new Error("Resource couldn't be loaded");
 			return new Promise((resolver, rechazar)=>{
 				b.text().then(c=>{
 					eval(c);
@@ -43,6 +44,7 @@ function load(a){
 	function loadcss(a){
 		return fetch(a).then(b=>{
 			return b.text().then(c=>{
+                if(b.ok!=true) throw new Error("Resource couldn't be loaded");
 				return new Promise((resolver, rechazar)=>{
 					$("head").append("<style data-from='"+a+"'>"+c+"</style>");
 					resolver(a);
@@ -59,11 +61,15 @@ function load(a){
 		}else{
 			if(what(a)=="js"){
 				let z=loadjs(a);
-				loaderLoaded.push(a);
+                Promise.all([z]).then(()=>{
+                    loaderLoaded.push(a);
+                });
 				return z;
 			}else if(what(a)=="css" || what(a)=="font"){
 				let z=loadcss(a);
-				loaderLoaded.push(a);
+				Promise.all([z]).then(()=>{
+                    loaderLoaded.push(a);
+                });
 				return z;
 			}
 		}
