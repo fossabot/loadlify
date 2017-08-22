@@ -1,0 +1,24 @@
+{
+  "name": "jsloader",
+  "homepage": "https://github.com/mrvik/jsloader",
+  "authors": [
+    "MrViK <mrvikxd@gmail.com>"
+  ],
+  "description": "Simple loader for web apps",
+  "main": "loader.js",
+  "keywords": [
+    "loader",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}
