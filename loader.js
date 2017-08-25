@@ -94,7 +94,7 @@ function load(a){
                     if(loaderLoaded.indexOf(loaderDefs[a])>-1) return resolver(loaderDefs[a]);
                     return resolver(pre(loaderDefs[a]));
                 }else{
-                    if(loaderLoaded.indexOf(props.prefijo+a)>-1) return props.prefijo+a;
+                    if(loaderLoaded.indexOf(props.prefijo+a)>-1) return resolver(props.prefijo+a);
                     return resolver(pre(props.prefijo+a));
                 }
             }else{
