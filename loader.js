@@ -122,7 +122,7 @@ function load(a){
 		}
 	}else{
 		let todo=[];
-		$.each(a, (k, v)=>{
+		a.forEach(v=>{
 			if(deps(v)!=undefined){
 				todo.push(deps(v));
 			}
