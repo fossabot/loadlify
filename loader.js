@@ -165,3 +165,4 @@ function what(a){
 		throw new Error("No hemos podido cargar los scripts de inicio");
 	}
 })();
+self.load=load;
