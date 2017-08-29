@@ -21,6 +21,7 @@ var loaderDefs={
 	listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 	typedJS: props.prefijo+"typedjs/lib/typed.min.js",
 	openpgp: props.prefijo+"openpgp/dist/openpgp.min.js",
+	moment: "https://unpkg.com/moment@2.18.1",
 	test: "test.js"
 }
 var loaderDeps={
