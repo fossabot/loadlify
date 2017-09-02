@@ -1,0 +1,25 @@
+{
+  "name": "jsloader",
+  "version": "1.0.0",
+  "description": "Asynchronous loader for JS, CSS and Fonts",
+  "main": "loader.js",
+  "scripts": {
+    "test": "node loader.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrvik/jsloader.git"
+  },
+  "keywords": [
+    "loader",
+    "js",
+    "css",
+    "modules"
+  ],
+  "author": "MrViK",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrvik/jsloader/issues"
+  },
+  "homepage": "https://github.com/mrvik/jsloader#readme"
+}
