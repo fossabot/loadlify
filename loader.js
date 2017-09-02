@@ -36,7 +36,7 @@ function load(a){
             if(b.ok!=true) throw new Error("Resource couldn't be loaded");
 			return new Promise((resolver, rechazar)=>{
 				b.text().then(c=>{
-					eval(c);
+					new Function(c)();
 					resolver(a);
 				});
 			});
