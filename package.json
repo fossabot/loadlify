@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/mrvik/jsloader/issues"
   },
-  "homepage": "https://github.com/mrvik/jsloader#readme"
+  "homepage": "https://github.com/mrvik/jsloader#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  }
 }
