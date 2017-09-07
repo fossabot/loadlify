@@ -99,7 +99,6 @@ class loadlify{
 		return h;
 	}
 }
-self.loadlify=loadlify;
 let defaults={
 	defs:{
 		bootstrap: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js",
@@ -134,7 +133,6 @@ let defaults={
 		prefix: "lib/"
 	}
 };
-self.foo=new loadlify({});
 (function(){
 	self.loadlifyJS=loadlify;
 	self.loadlify=new loadlify({});
