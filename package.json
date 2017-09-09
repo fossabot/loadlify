@@ -4,7 +4,7 @@
   "description": "Asynchronous loader for JS, CSS and Fonts",
   "main": "loader.js",
   "scripts": {
-    "test": "node loader.js"
+    "test": "babel loadlify.js > /dev/null"
   },
   "repository": {
     "type": "git",
