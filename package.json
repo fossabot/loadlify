@@ -1,14 +1,14 @@
 {
-  "name": "jsloader",
+  "name": "loadlify",
   "version": "1.0.0",
   "description": "Asynchronous loader for JS, CSS and Fonts",
-  "main": "loader.js",
+  "main": "loadlify.min.js",
   "scripts": {
     "test": "babel loadlify.js > /dev/null"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrvik/jsloader.git"
+    "url": "git+https://github.com/mrvik/loadlify.git"
   },
   "keywords": [
     "loader",
@@ -19,9 +19,9 @@
   "author": "MrViK",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mrvik/jsloader/issues"
+    "url": "https://github.com/mrvik/loadlify/issues"
   },
-  "homepage": "https://github.com/mrvik/jsloader#readme",
+  "homepage": "https://github.com/mrvik/loadlify#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0"
   }
