@@ -51,10 +51,10 @@ class loadlifyJS{
 		return a;
 	}
 	async load(a, b){
-		if(!navigator.onLine) throw new Error("OFFLINE!");
-		if(a==undefined) throw new Error("Undefined not allowed");
 		if(b==undefined) b=[];
 		if(typeof b=="string") b=b[b];
+		if(!navigator.onLine && b.includes("force")!= false) throw new Error("OFFLINE!");
+		if(a==undefined) throw new Error("Undefined not allowed");
 		if(typeof a=="string"){
 			return await this.st1(a, b);
 		}else{
@@ -84,7 +84,7 @@ class loadlifyJS{
 		return await Promise.all(c);
 	}
 	async st3(a, b){
-		if(Object.keys(this.loaded).includes(a)) return this.loaded.valueOf(a);
+		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
 		let rsp=await fetch(a)
 		.then(c=>{
 			if(c.ok) return c.text();
