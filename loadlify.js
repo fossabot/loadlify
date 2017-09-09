@@ -4,7 +4,7 @@ class loadlifyJS{
 	constructor(a){
 		this.defs=a.defs||defaults.defs;
 		this.deps=a.deps||defaults.deps;
-		this.loaded=[];
+		this.loaded={};
 		this.flags=a.flags||defaults.flags;
 		this.props=a.properties||defaults.properties;
 		this.handlers={
@@ -51,7 +51,8 @@ class loadlifyJS{
 		return a;
 	}
 	async load(a, b){
-		if(a==undefined) return "Undefined not allowed";
+		if(!navigator.onLine) throw new Error("OFFLINE!");
+		if(a==undefined) throw new Error("Undefined not allowed");
 		if(b==undefined) b=[];
 		if(typeof b=="string") b=b[b];
 		if(typeof a=="string"){
@@ -83,12 +84,17 @@ class loadlifyJS{
 		return await Promise.all(c);
 	}
 	async st3(a, b){
-		return await fetch(a)
+		if(Object.keys(this.loaded).includes(a)) return this.loaded.valueOf(a);
+		let rsp=await fetch(a)
 		.then(c=>{
 			if(c.ok) return c.text();
 			throw new Error("Cannot fetch resource");
 		})
-		.then(d=>this.handlers[this.whatIs(a,b)]({data: d, url: a},b));
+		.then(d=>this.handlers[this.whatIs(a,b)]({data: d, url: a},b)).catch(e=>{
+			delete this.loaded[a];
+			throw e;
+		});
+		this.loaded[a]=rsp;
 	}
 	whatIs(a, b){
 		if(typeof a=="object" && 'href' in a) a=a.href;
