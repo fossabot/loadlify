@@ -1,0 +1,12 @@
+language: node_js
+node_js: '8'
+sudo: false
+deploy:
+  provider: npm
+  email: mrvikxd@gmail.com
+  api_key:
+    secure: o+9eLlZ8Y8NNngK4bLmGh3+Impxc/uMcN21aIYXTBBRuc8bxR5TEHkIz9rUJ1HRYChpfp/yNXqtTZmOhuyIPfnKg4us6yAmveQNH8x8KN+D+2EIoix+a3pIUqxjIOCQA3jjKK1dmkvd0kMfin++Ivp8IorpS4VWZye61GGhjiQsThJ7TuR7TvDcwGb0yvYlPwbMlDcmPtiaLAlCpG0hJNulH3UT48OrVjy1U9qUxetshpQW4nRhIETnzObJq8RdIVjF1YXJ4EDVnZhpf6q/fgo3stDh2xob6p3RD70O4CeQLUkGPFqWSNF0iIhFZDdjlwoLPP0TaCns+/Ka2/0N/tgcGEyVXwqWnKEovw1KptO33vwdLYPl1IXfy5cwxwvZKeOP5Bdn34lzQMnHmj2B72FYzeJYfd4v5dG+jWF/76Xagbq1Z6ruvUtwCvJBPSwIca2AElqBymyKAVHer3jFhyg4S/chBXVzZVM2mQLOfK1Yhmpehcm2U9VFD4QK5THm4EsxKQ+L+/H6VdSm9TJch4q391Mgy/YcJ5OFkGSJaGFw2UFyvkkB92Y3E+q4vGTIk/b6NpSNkkEGscpQaRCcdurbtfE4XFD5C6Sf9C4K4Iij40c9OOe/SebTOVjHot4geX/Ua4N8/ea+vUnydQNUZRlkMrf6aXC5Pqt2abmo8wtE=
+  on:
+    tags: true
+    repo: mrvik/loadlify
+    branch: master
