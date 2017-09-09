@@ -1,12 +1,42 @@
 "use-strict";
 //LoadlifyJS Web Loader
-class loadlify{
+class loadlifyJS{
 	constructor(a){
 		this.defs=a.defs||defaults.defs;
 		this.deps=a.deps||defaults.deps;
 		this.loaded=[];
 		this.flags=a.flags||defaults.flags;
 		this.props=a.properties||defaults.properties;
+		this.handlers={
+			css: async function(a, b){
+				if(typeof $ == "undefined"){
+					if(b.includes("nojquery")) throw new Error("CSS load requires jQuery or Zepto");
+					await load("zepto");
+				}
+				$("head").append("<style data-src='"+a.url+"'>"+a.data+"</style>");
+				return [a.data, {flags: b, url: a.url}];
+			},
+			js: async function(a, b){
+				if(b.includes("astag")){
+					if(typeof $ == "undefined"){
+						if(b.includes("nojquery")) throw new Error("CSS load requires jQuery or Zepto");
+						await load("zepto");
+					}
+					$("head").append("<script data-src='"+a.url+"'>"+a.data+"</script>");
+					return [$("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
+				}else{
+					let c=new Function(a.data);
+					let d=c();
+					return [c, {rv:d,flags:b,url:a.url}];
+				}
+			},
+			html: async function(a, b){
+				return [a.data, {flags: b, url: a.url}];
+			},
+			plain: async function(a, b){
+				return [a.data, {flags: b, url: a.url}];
+			}
+		};
 	}
 	get add(){
 		let _this=this;
@@ -35,12 +65,13 @@ class loadlify{
 		}
 	}
 	async st1(a, b){
-		if(b.includes("nodeps") || this.deps[a]==undefined) return this.st2([a], b);
 		if(typeof a=="string"){
 			a=[a];
 		}
-		let c=a.concat(this.deps[a]);
-		return this.st2(c, b);
+		if(b.includes("nodeps") || this.deps[a]==undefined) return this.st2(a, b);
+		let rt= await this.load(this.deps[a], b);
+		let rt2=await this.st2(a, b);
+		return [rt, rt2];
 	}
 	async st2(a, b){
 		let c=[];
@@ -49,10 +80,15 @@ class loadlify{
 			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b));
 			return c.push(this.st3(new URL(d, location), b));
 		});
-		return Promise.all(c);
+		return await Promise.all(c);
 	}
 	async st3(a, b){
-		return fetch(a).then(c=>c.text()).then(d=>this.handlers[this.whatIs(a,b)]({data: d, url: a},b));
+		return await fetch(a)
+		.then(c=>{
+			if(c.ok) return c.text();
+			throw new Error("Cannot fetch resource");
+		})
+		.then(d=>this.handlers[this.whatIs(a,b)]({data: d, url: a},b));
 	}
 	whatIs(a, b){
 		if(typeof a=="object" && 'href' in a) a=a.href;
@@ -70,37 +106,31 @@ class loadlify{
 		}else if(a.match(/(.*fonts.*)/)){
 			return "font";
 		}else{
-			return undefined;
+			console.warn("Unknown file: ", a);
+			return "unknown";
 		}
 	}
-	get handlers(){
-		let h={
-			css: async function(a, b){
-				$("head").append("<style data-src='"+a.url+"'>"+a.data+"</style>");
-				return [a.data, {flags: b, url: a.url}];
-			},
-			js: async function(a, b){
-				if(b.includes("astag")){
-					$("head").append("<script data-src='"+a.url+"'>"+a.data+"</script>");
-					return [$("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
-				}else{
-					let c=new Function(a.data);
-					let d=c();
-					return [c, {rv:d,flags:b,url:a.url}];
-				}
-			},
-			html: async function(a, b){
-				return [a.data, {flags: b, url: a.url}];
-			},
-			plain: async function(a, b){
-				return [a.data, {flags: b, url: a.url}];
-			}
-		};
-		return h;
+	handlerctl(a){
+		switch(a){
+			case "set":
+				return this.handlers[b]=c;
+			case "remove":
+				return delete this.handlers[b];
+			default:
+				return this.handlers;
+		}
+	}
+	static optjQuery(){
+		if(typeof jQuery == "undefined"){
+			return "jQuery";
+		}else{
+			return undefined;
+		}
 	}
 }
 let defaults={
 	defs:{
+		jQuery: "https://code.jquery.com/jquery-3.2.1.min.js",
 		bootstrap: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js",
 		bootstrapCSS: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
 		dexie: "https://unpkg.com/dexie@latest/dist/dexie.min.js",
@@ -120,13 +150,14 @@ let defaults={
 		listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
-		moment: "https://unpkg.com/moment@latest"
+		moment: "https://unpkg.com/moment@latest/moment.js",
+		zepto: "https://unpkg.com/zepto@1.2.0/dist/zepto.min.js"
 	},
 	deps:{
 		vex: ["vexCSS", "vexTheme"],
-		jqueryUI: ["jqueryUICSS"],
-		materialize: ["materializeCSS", "materialIcons"],
-		bootstrap: ["bootstrapCSS"]
+		jqueryUI: ["jqueryUICSS", loadlifyJS.optjQuery()],
+		materialize: ["materializeCSS", "materialIcons", loadlifyJS.optjQuery()],
+		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()],
 	},
 	flags: [],
 	properties:{
@@ -134,7 +165,7 @@ let defaults={
 	}
 };
 (function(){
-	self.loadlifyJS=loadlify;
-	self.loadlify=new loadlify({});
+	self.loadlifyJS=loadlifyJS;
+	self.loadlify=new loadlifyJS({});
 	self.load=function(a, b){return self.loadlify.load(a, b)};
 })();
