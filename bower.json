@@ -5,7 +5,7 @@
     "MrViK <mrvikxd@gmail.com>"
   ],
   "description": "Simple loader for web apps",
-  "main": "loadlify.min.js",
+  "main": "loadlify.js",
   "keywords": [
     "loader",
     "javascript"
