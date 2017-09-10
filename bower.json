@@ -1,11 +1,11 @@
 {
-  "name": "jsloader",
-  "homepage": "https://github.com/mrvik/jsloader",
+  "name": "loadlify",
+  "homepage": "https://github.com/mrvik/loadlify",
   "authors": [
     "MrViK <mrvikxd@gmail.com>"
   ],
   "description": "Simple loader for web apps",
-  "main": "loader.js",
+  "main": "loadlify.min.js",
   "keywords": [
     "loader",
     "javascript"
