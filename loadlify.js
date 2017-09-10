@@ -5,6 +5,7 @@ class loadlifyJS{
 		this.defs=a.defs||defaults.defs;
 		this.deps=a.deps||defaults.deps;
 		this.loaded={};
+		this.links={};
 		this.flags=a.flags||defaults.flags;
 		this.props=a.properties||defaults.properties;
 		this.handlers={
@@ -50,7 +51,20 @@ class loadlifyJS{
 		};
 		return a;
 	}
-	async load(a, b){
+	load(a, b){
+		return this.load2(a, b).then(a=>{
+			if(typeof a=="array"){
+				let todo=[];
+				a.forEach(x=>{
+					return todo.push(this.loaded[this.links[a]]);
+				});
+				return Promise.all(todo);
+			}else{
+				return this.loaded[this.links[a]];
+			}
+		});
+	}
+	async load2(a, b){
 		if(b==undefined) b=[];
 		if(typeof b=="string") b=[b];
 		b.concat(this.flags);
@@ -78,25 +92,32 @@ class loadlifyJS{
 	async st2(a, b){
 		let c=[];
 		a.forEach(d=>{
-			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b));
-			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b));
-			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b));
-			return c.push(this.st3(new URL(this.props.prefix+d, location), b));
+			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b,a));
+			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b,a));
+			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b,a));
+			return c.push(this.st3(new URL(this.props.prefix+d, location), b,a));
 		});
-		return await Promise.all(c);
+		return Promise.all(c);
 	}
-	async st3(a, b){
+	async st3(a, b,f){
 		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
-		let rsp=await fetch(a)
-		.then(c=>{
-			if(c.ok) return c.text();
-			throw new Error("Cannot fetch resource");
-		})
-		.then(d=>this.handlers[this.whatIs(a,b)]({data: d, url: a},b)).catch(e=>{
+		this.links[f]=a;
+		let type=this.whatIs(a,b);
+		try{
+			let rsp=fetch(a)
+			.then(c=>{
+				if(c.ok) return c.text();
+				throw new Error("Cannot fetch resource");
+			})
+			.then(d=>
+				this.handlers[type]({data: d, url: a},b)
+			);
+			this.loaded[a]=rsp;
+			return rsp;
+		}catch(e){
 			delete this.loaded[a];
 			throw e;
-		});
-		this.loaded[a]=rsp;
+		}
 	}
 	whatIs(a, b){
 		if(typeof a=="object" && 'href' in a) a=a.href;
@@ -112,7 +133,7 @@ class loadlifyJS{
 		}else if(a.match(/(.*\.(html)|(htm))/)){
 			return "html";
 		}else if(a.match(/(.*fonts.*)/)){
-			return "font";
+			return "css"; //Fonts are loaded as css
 		}else{
 			console.warn("Unknown file: ", a);
 			return "unknown";
@@ -138,7 +159,7 @@ class loadlifyJS{
 }
 let defaults={
 	defs:{
-		jQuery: "https://code.jquery.com/jquery-3.2.1.min.js",
+		jQuery: "https://unpkg.com/jquery@latest/dist/jquery.min.js",
 		bootstrap: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js",
 		bootstrapCSS: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
 		dexie: "https://unpkg.com/dexie@latest/dist/dexie.min.js",
@@ -219,6 +240,5 @@ class RequireLayer{
 	self.loadlify=new loadlifyJS({});
 	self.load=function(a, b){return self.loadlify.load(a, b)};
 	//Require Layer (Experimental) Not suitable for production!
-	self.requireLayer=new RequireLayer();
-	self.require=function(a){return self.requireLayer.require(a)};
+// 	self.requireLayer=new RequireLayer();
 })();
