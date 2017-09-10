@@ -52,7 +52,8 @@ class loadlifyJS{
 	}
 	async load(a, b){
 		if(b==undefined) b=[];
-		if(typeof b=="string") b=b[b];
+		if(typeof b=="string") b=[b];
+		b.concat(this.flags);
 		if(!navigator.onLine && b.includes("force")!= false) throw new Error("OFFLINE!");
 		if(a==undefined) throw new Error("Undefined not allowed");
 		if(typeof a=="string"){
@@ -79,7 +80,8 @@ class loadlifyJS{
 		a.forEach(d=>{
 			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b));
 			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b));
-			return c.push(this.st3(new URL(d, location), b));
+			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b));
+			return c.push(this.st3(new URL(this.props.prefix+d, location), b));
 		});
 		return await Promise.all(c);
 	}
@@ -167,11 +169,56 @@ let defaults={
 	},
 	flags: [],
 	properties:{
-		prefix: "lib/"
+		prefix: "lib/",
+		suffix: ".js"
 	}
 };
+class RequireLayer{
+	constructor(a){
+		this.handler={
+			get: (tgt, name)=>{
+				return tgt[name];
+			},
+			set: (tgt, name, val)=>{
+				tgt[name]=val;
+				return (tgt[name]==val);
+			}
+		};
+		this.exports={};
+		self.exports=new Proxy(this.exports, this.handler);
+	}
+	require(a){
+		if(typeof a!="string") throw new Error("Only strings are supported");
+		if(this.exports[a]) return this.exports[a];
+		return this.loadModule(this.getUrl(a), a);
+	}
+	getUrl(d){
+		if(d.match(/^(((http|https):)|(\/\/))/)) return d;
+		if(loadlify.defs.hasOwnProperty(d)) return loadlify.defs[d];
+		return new URL(loadlify.props.prefix+d+loadlify.props.suffix, location);
+	}
+	loadModule(a, b){
+		console.warn("This function is not intended for production. Please, use loadlify.load one");
+		function* gen(a){
+			let req=new XMLHttpRequest();
+			req.open("GET", a, false);
+			req.send();
+			if(req.status!=200) throw new Error("Failed to load "+a+". Status: "+req.status);
+			let res=req.responseText;
+			res=new Function(res);
+			res();
+			return res;
+		}
+		let Z=gen(a).next().value;
+		return this.exports[b];
+	}
+}
 (function(){
+	//Jump Loadlify to Global Scope
 	self.loadlifyJS=loadlifyJS;
 	self.loadlify=new loadlifyJS({});
 	self.load=function(a, b){return self.loadlify.load(a, b)};
+	//Require Layer (Experimental) Not suitable for production!
+	self.requireLayer=new RequireLayer();
+	self.require=function(a){return self.requireLayer.require(a)};
 })();
