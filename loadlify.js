@@ -10,20 +10,12 @@ class loadlifyJS{
 		this.props=a.properties||defaults.properties;
 		this.handlers={
 			css: async function(a, b){
-				if(typeof $ == "undefined"){
-					if(b.includes("nojquery")) throw new Error("CSS load requires jQuery or Zepto");
-					await load("zepto");
-				}
-				$("head").append("<style data-src='"+a.url+"'>"+a.data+"</style>");
+				document.querySelector("head").appendChild("<style data-src='"+a.url+"'>"+a.data+"</style>");
 				return [a.data, {flags: b, url: a.url}];
 			},
 			js: async function(a, b){
 				if(b.includes("astag")){
-					if(typeof $ == "undefined"){
-						if(b.includes("nojquery")) throw new Error("CSS load requires jQuery or Zepto");
-						await load("zepto");
-					}
-					$("head").append("<script data-src='"+a.url+"'>"+a.data+"</script>");
+					document.querySelector("head").appendChild("<script data-src='"+a.url+"'>"+a.data+"</script>");
 					return [$("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
 				}else{
 					let c=new Function(a.data);
