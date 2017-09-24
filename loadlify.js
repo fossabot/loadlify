@@ -45,7 +45,7 @@ class loadlifyJS{
 		return a;
 	}
 	prefetch(){
-		return new Promise(resolver=>{
+		this.pref=new Promise(resolver=>{
 			delete window.fetch;
 			let x=new XMLHttpRequest();
 			x.open("GET", defaults.defs.fetch, true);
@@ -53,6 +53,7 @@ class loadlifyJS{
 			x.onloadend=a=>{
 				console.log(a);
 				new Function(a.target.response)();
+				resolver(a);
 			};
 		});
 	}
@@ -108,6 +109,7 @@ class loadlifyJS{
 		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
 		this.links[f]=a;
 		let type=this.whatIs(a,b);
+		await this.pref;
 		try{
 			let rsp=fetch(a)
 			.then(c=>{
