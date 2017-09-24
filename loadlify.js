@@ -10,7 +10,7 @@ class loadlifyJS{
 		this.props=a.properties||defaults.properties;
 		this.handlers={
 			css: async function(a, b){
-				document.querySelector("head").appendChild("<style data-src='"+a.url+"'>"+a.data+"</style>");
+				document.querySelector("head").appendChild(document.createTextNode(`<style data-src='${a.url}'>${a.data}</style>`));
 				return [a.data, {flags: b, url: a.url}];
 			},
 			js: async function(a, b){
