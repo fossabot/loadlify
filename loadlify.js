@@ -46,13 +46,13 @@ class loadlifyJS{
 	}
 	prefetch(){
 		return new Promise(resolver=>{
+			delete window.fetch;
 			let x=new XMLHttpRequest();
 			x.open("GET", defaults.defs.fetch, true);
 			x.send();
-			x.onloadend=(a)=>{
-				this.fetchFunction=true;
+			x.onloadend=a=>{
 				console.log(a);
-				new Function(a)();
+				new Function(a.target.response)();
 			};
 		});
 	}
