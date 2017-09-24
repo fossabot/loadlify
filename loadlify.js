@@ -48,7 +48,7 @@ class loadlifyJS{
 	}
 	prefetch(){
 		this.pref=new Promise(resolver=>{
-			delete window.fetch;
+			delete self.fetch;
 			let x=new XMLHttpRequest();
 			x.open("GET", defaults.defs.fetch, true);
 			x.send();
