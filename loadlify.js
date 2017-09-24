@@ -2,6 +2,7 @@
 //LoadlifyJS Web Loader
 class loadlifyJS{
 	constructor(a){
+		this.prefetch();
 		this.defs=a.defs||defaults.defs;
 		this.deps=a.deps||defaults.deps;
 		this.loaded={};
@@ -42,6 +43,18 @@ class loadlifyJS{
 			}
 		};
 		return a;
+	}
+	prefetch(){
+		return new Promise(resolver=>{
+			let x=new XMLHttpRequest();
+			x.open("GET", defaults.defs.fetch, true);
+			x.send();
+			x.onloadend=(a)=>{
+				this.fetchFunction=true;
+				console.log(a);
+				new Function(a)();
+			};
+		});
 	}
 	load(a, b){
 		return this.load2(a, b).then(a=>{
@@ -172,7 +185,8 @@ let defaults={
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
 		moment: "https://unpkg.com/moment@latest/moment.js",
-		zepto: "https://unpkg.com/zepto@1.2.0/dist/zepto.min.js"
+		zepto: "https://unpkg.com/zepto@1.2.0/dist/zepto.min.js",
+		fetch: "https://raw.githubusercontent.com/github/fetch/master/fetch.js"
 	},
 	deps:{
 		vex: ["vexCSS", "vexTheme"],
