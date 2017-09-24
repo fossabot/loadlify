@@ -2,7 +2,7 @@
 //LoadlifyJS Web Loader
 class loadlifyJS{
 	constructor(a){
-		this.prefetch();
+		if(typeof XMLHttpRequest!="undefined") this.prefetch();
 		this.defs=a.defs||defaults.defs;
 		this.deps=a.deps||defaults.deps;
 		this.loaded={};
