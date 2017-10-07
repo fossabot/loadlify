@@ -217,6 +217,8 @@ let defaults={
 		materializeCSS: "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css",
 		materialize: "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js",
 		materialIcons: "https://fonts.googleapis.com/icon?family=Material+Icons",
+		["material-components-web"]: "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css",
+		["material-components-web-js"]: "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js",
 		socket_io: "https://unpkg.com/socket.io-client@latest/dist/socket.io.js",
 		sha256: "https://unpkg.com/js-sha256@latest/build/sha256.min.js",
 		AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
@@ -232,7 +234,7 @@ let defaults={
 		vex: ["vexCSS", "vexTheme"],
 		jqueryUI: ["jqueryUICSS", loadlifyJS.optjQuery()],
 		materialize: ["materializeCSS", "materialIcons", loadlifyJS.optjQuery()],
-		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()],
+		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()]
 	},
 	flags: [],
 	properties:{
