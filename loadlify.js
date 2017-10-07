@@ -60,7 +60,7 @@ class loadlifyJS{
 		});
 	}
 	async load(a, b){
-		if(a.match("file://")) this.prefetch(true);
+		if(typeof a=="string"&&a.match("file://")) this.prefetch(true);
 		await this.pref;
 		if(typeof a=="undefined") return Promise.resolve();
 		if(typeof b=="undefined") b=[];
