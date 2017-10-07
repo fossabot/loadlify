@@ -53,81 +53,114 @@ class loadlifyJS{
 			x.open("GET", defaults.defs.fetch, true);
 			x.send();
 			x.onloadend=a=>{
-				console.log(a);
 				new Function(a.target.response)();
 				resolver(a);
 			};
 		});
 	}
-	load(a, b){
-		return this.load2(a, b).then(a=>{
-			if(typeof a=="array"){
-				let todo=[];
-				a.forEach(x=>{
-					return todo.push(this.loaded[this.links[a]]);
-				});
-				return Promise.all(todo);
-			}else{
-				return this.loaded[this.links[a]];
-			}
-		});
-	}
-	async load2(a, b){
-		if(b==undefined) b=[];
-		if(typeof b=="string") b=[b];
-		b.concat(this.flags);
-		if(!navigator.onLine && b.includes("force")!= false) throw new Error("OFFLINE!");
-		if(a==undefined) throw new Error("Undefined not allowed");
-		if(typeof a=="string"){
-			return await this.st1(a, b);
-		}else{
+	async load(a, b){
+		await this.pref;
+		if(typeof a=="undefined") return Promise.resolve();
+		if(typeof b=="undefined") b=[];
+		if(typeof a=="object"){
 			let todo=[];
 			a.forEach(c=>{
-				todo.push(this.st1(c, b));
+				todo.push(this.load(c, b));
 			});
-			return await Promise.all(todo);
+			await Promise.all(todo);
+			return todo;
 		}
-	}
-	async st1(a, b){
-		if(typeof a=="string"){
-			a=[a];
+		let loading={};
+		loading["link"]=this.getlink(a, b);
+		
+		let cache=this.cachemgr(loading.link, b);
+		if(cache) return Promise.resolve(cache); //If URL is in cache, return cached response
+		
+		if(!b.includes("loadeps")){
+			loading["deps"]=await this.loadeps(a, b);
 		}
-		if(b.includes("nodeps") || this.deps[a]==undefined) return this.st2(a, b);
-		let rt= await this.load(this.deps[a], b);
-		let rt2=await this.st2(a, b);
-		return [rt, rt2];
-	}
-	async st2(a, b){
-		let c=[];
-		a.forEach(d=>{
-			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b,a));
-			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b,a));
-			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b,a));
-			return c.push(this.st3(new URL(this.props.prefix+d, location), b,a));
+		loading["text"]=await fetch(loading.link).then(x=>{
+			if(x.ok)return x.text();
+			return Promise.reject(x.statusText);
 		});
-		return Promise.all(c);
+		loading.type=this.whatIs(loading.link, b);
+		loading.apply=await this.handlers[loading.type]({data: loading.text, url: loading.link},b);
+		this.loaded[loading.link]=loading;
+		return loading;
 	}
-	async st3(a, b,f){
-		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
-		this.links[f]=a;
-		let type=this.whatIs(a,b);
-		await this.pref;
-		try{
-			let rsp=fetch(a)
-			.then(c=>{
-				if(c.ok) return c.text();
-				throw new Error("Cannot fetch resource");
-			})
-			.then(d=>
-				this.handlers[type]({data: d, url: a},b)
-			);
-			this.loaded[a]=rsp;
-			return rsp;
-		}catch(e){
-			delete this.loaded[a];
-			throw e;
+	loadeps(a, b){
+		if(this.deps.hasOwnProperty(a)){
+			return this.load(this.deps[a]);
 		}
+		return Promise.resolve();
 	}
+	getlink(d, b){
+		if(d.match(/^(((http|https):)|(\/\/))/)) return d;
+		if(this.defs.hasOwnProperty(d)) return this.defs[d];
+		if(b.includes("noprefix")) return new URL(d, location);
+		return new URL(this.props.prefix+d, location);
+	}
+	cachemgr(a, b){
+		if(b.includes("nocache")|| b.includes("force"))return undefined;
+		if(Object.keys(this.loaded).includes(a))return this.loaded[a];
+		return undefined;
+	}
+// 	async load2(a, b){
+// 		if(b==undefined) b=[];
+// 		if(typeof b=="string") b=[b];
+// 		b.concat(this.flags);
+// 		if(!navigator.onLine && b.includes("force")!= false) throw new Error("OFFLINE!");
+// 		if(a==undefined) throw new Error("Undefined not allowed");
+// 		if(typeof a=="string"){
+// 			return await this.st1(a, b);
+// 		}else{
+// 			let todo=[];
+// 			a.forEach(c=>{
+// 				todo.push(this.st1(c, b));
+// 			});
+// 			return await Promise.all(todo);
+// 		}
+// 	}
+// 	async st1(a, b){
+// 		if(typeof a=="string"){
+// 			a=[a];
+// 		}
+// 		if(b.includes("nodeps") || this.deps[a]==undefined) return this.st2(a, b);
+// 		let rt= await this.load(this.deps[a], b);
+// 		let rt2=await this.st2(a, b);
+// 		return [rt, rt2];
+// 	}
+// 	async st2(a, b){
+// 		let c=[];
+// 		a.forEach(d=>{
+// 			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b,a));
+// 			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b,a));
+// 			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b,a));
+// 			return c.push(this.st3(new URL(this.props.prefix+d, location), b,a));
+// 		});
+// 		return Promise.all(c);
+// 	}
+// 	async st3(a, b,f){
+// 		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
+// 		this.links[f]=a;
+// 		let type=this.whatIs(a,b);
+// 		await this.pref;
+// 		try{
+// 			let rsp=fetch(a)
+// 			.then(c=>{
+// 				if(c.ok) return c.text();
+// 				throw new Error("Cannot fetch resource");
+// 			})
+// 			.then(d=>
+// 				this.handlers[type]({data: d, url: a},b)
+// 			);
+// 			this.loaded[a]=rsp;
+// 			return rsp;
+// 		}catch(e){
+// 			delete this.loaded[a];
+// 			throw e;
+// 		}
+// 	}
 	whatIs(a, b){
 		if(typeof a=="object" && 'href' in a) a=a.href;
 		
