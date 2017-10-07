@@ -284,6 +284,7 @@ class RequireLayer{
 }
 (function(){
 	//Jump Loadlify to Global Scope
+	self.exports={};
 	self.loadlifyJS=loadlifyJS;
 	self.loadlify=new loadlifyJS({});
 	self.load=function(a, b){return self.loadlify.load(a, b)};
