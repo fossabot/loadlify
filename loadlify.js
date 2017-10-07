@@ -46,7 +46,8 @@ class loadlifyJS{
 		};
 		return a;
 	}
-	prefetch(){
+	prefetch(a){
+		if(!a&&typeof fetch!="undefined")return this.pref=Promise.resolve();
 		this.pref=new Promise(resolver=>{
 			delete self.fetch;
 			let x=new XMLHttpRequest();
@@ -59,6 +60,7 @@ class loadlifyJS{
 		});
 	}
 	async load(a, b){
+		if(a.match("file://")) this.prefetch(true);
 		await this.pref;
 		if(typeof a=="undefined") return Promise.resolve();
 		if(typeof b=="undefined") b=[];
@@ -95,7 +97,7 @@ class loadlifyJS{
 		return Promise.resolve();
 	}
 	getlink(d, b){
-		if(d.match(/^(((http|https):)|(\/\/))/)) return d;
+		if(d.match(/^(((http|https|file):)|(\/\/))/)) return d;
 		if(this.defs.hasOwnProperty(d)) return this.defs[d];
 		if(b.includes("noprefix")) return new URL(d, location);
 		return new URL(this.props.prefix+d, location);
@@ -222,8 +224,9 @@ let defaults={
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
 		moment: "https://unpkg.com/moment@latest/moment.js",
-		zepto: "https://unpkg.com/zepto@1.2.0/dist/zepto.min.js",
-		fetch: "https://raw.githubusercontent.com/github/fetch/master/fetch.js"
+		zepto: "https://unpkg.com/zepto@latest/dist/zepto.min.js",
+		fetch: "https://raw.githubusercontent.com/github/fetch/master/fetch.js",
+		vue: "https://unpkg.com/vue@latest/dist/vue.js"
 	},
 	deps:{
 		vex: ["vexCSS", "vexTheme"],
