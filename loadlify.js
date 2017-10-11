@@ -222,19 +222,25 @@ let defaults={
 		socket_io: "https://unpkg.com/socket.io-client@latest/dist/socket.io.js",
 		sha256: "https://unpkg.com/js-sha256@latest/build/sha256.min.js",
 		AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
+		photoswipe: "https://unpkg.com/photoswipe@latest/dist/photoswipe.css",
+		["photoswipe-skin"]: "https://unpkg.com/photoswipe@latest/dist/default-skin/default-skin.css",
+		photoswipeJS: "https://unpkg.com/photoswipe@4.1.2/dist/photoswipe.min.js",
+		["photoswipe-ui"]: "https://unpkg.com/photoswipe@4.1.2/dist/photoswipe-ui-default.min.js",
 		listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
 		moment: "https://unpkg.com/moment@latest/moment.js",
 		zepto: "https://unpkg.com/zepto@latest/dist/zepto.min.js",
 		fetch: "https://raw.githubusercontent.com/github/fetch/master/fetch.js",
-		vue: "https://unpkg.com/vue@latest/dist/vue.js"
+		vue: "https://unpkg.com/vue@latest/dist/vue.min.js",
+		["vue-dev"]: "https://unpkg.com/vue@latest/dist/vue.js"
 	},
 	deps:{
 		vex: ["vexCSS", "vexTheme"],
 		jqueryUI: ["jqueryUICSS", loadlifyJS.optjQuery()],
 		materialize: ["materializeCSS", "materialIcons", loadlifyJS.optjQuery()],
-		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()]
+		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()],
+		photoswipe: ["photoswipe-skin", "photoswipeJS", "photoswipe-ui"]
 	},
 	flags: [],
 	properties:{
