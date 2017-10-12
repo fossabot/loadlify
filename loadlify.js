@@ -11,6 +11,15 @@ class loadlifyJS{
 		this.props=a.properties||defaults.properties;
 		this.handlers={
 			css: async function(a, b){
+				if(b.includes("astag")){
+					let node=document.createElement("link");
+					node.setAttribute("rel", "stylesheet");
+					node.setAttribute("type", "text/css");
+					node.setAttribute("data-loadlify", a.url);
+					node.setAttribute("href", a.url);
+					document.querySelector("head").appendChild(node);
+					return [a.data, {flags:b,url:a.url}];
+				}
 				let node=document.createElement("style");
 				node.innerText=a.data;
 				document.querySelector("head").appendChild(node);
@@ -18,8 +27,11 @@ class loadlifyJS{
 			},
 			js: async function(a, b){
 				if(b.includes("astag")){
-					document.querySelector("head").appendChild("<script data-src='"+a.url+"'>"+a.data+"</script>");
-					return [$("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
+					let node=document.createElement("script");
+					node.setAttribute("data-src", a.url);
+					node.innerHTML=a.data;
+					document.querySelector("head").appendChild(node);
+					return [document.querySelector("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
 				}else{
 					let c=new Function(a.data);
 					let d=c();
@@ -46,87 +58,66 @@ class loadlifyJS{
 		};
 		return a;
 	}
-	prefetch(){
+	prefetch(a){
+		if(!a&&typeof fetch!="undefined")return this.pref=Promise.resolve();
 		this.pref=new Promise(resolver=>{
 			delete self.fetch;
 			let x=new XMLHttpRequest();
 			x.open("GET", defaults.defs.fetch, true);
 			x.send();
 			x.onloadend=a=>{
-				console.log(a);
 				new Function(a.target.response)();
 				resolver(a);
 			};
 		});
 	}
-	load(a, b){
-		return this.load2(a, b).then(a=>{
-			if(typeof a=="array"){
-				let todo=[];
-				a.forEach(x=>{
-					return todo.push(this.loaded[this.links[a]]);
-				});
-				return Promise.all(todo);
-			}else{
-				return this.loaded[this.links[a]];
-			}
-		});
-	}
-	async load2(a, b){
-		if(b==undefined) b=[];
-		if(typeof b=="string") b=[b];
-		b.concat(this.flags);
-		if(!navigator.onLine && b.includes("force")!= false) throw new Error("OFFLINE!");
-		if(a==undefined) throw new Error("Undefined not allowed");
-		if(typeof a=="string"){
-			return await this.st1(a, b);
-		}else{
+	async load(a, b){
+		if(typeof a=="string"&&a.match("file://")) this.prefetch(true);
+		await this.pref;
+		if(typeof a=="undefined") return Promise.resolve();
+		if(typeof b=="undefined") b=[];
+		if(typeof a=="object"){
 			let todo=[];
 			a.forEach(c=>{
-				todo.push(this.st1(c, b));
+				todo.push(this.load(c, b));
 			});
-			return await Promise.all(todo);
+			await Promise.all(todo);
+			return todo;
 		}
-	}
-	async st1(a, b){
-		if(typeof a=="string"){
-			a=[a];
+		let loading={};
+		loading["link"]=this.getlink(a, b);
+		
+		let cache=this.cachemgr(loading.link, b);
+		if(cache) return Promise.resolve(cache); //If URL is in cache, return cached response
+		
+		if(!b.includes("nodeps")){
+			loading["deps"]=await this.loadeps(a, b);
 		}
-		if(b.includes("nodeps") || this.deps[a]==undefined) return this.st2(a, b);
-		let rt= await this.load(this.deps[a], b);
-		let rt2=await this.st2(a, b);
-		return [rt, rt2];
-	}
-	async st2(a, b){
-		let c=[];
-		a.forEach(d=>{
-			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b,a));
-			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b,a));
-			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b,a));
-			return c.push(this.st3(new URL(this.props.prefix+d, location), b,a));
+		loading["text"]=await fetch(loading.link).then(x=>{
+			if(x.ok)return x.text();
+			return Promise.reject(x.statusText);
 		});
-		return Promise.all(c);
+		loading.type=this.whatIs(loading.link, b);
+		loading.apply=await this.handlers[loading.type]({data: loading.text, url: loading.link},b);
+		this.loaded[loading.link]=loading;
+		return loading;
 	}
-	async st3(a, b,f){
-		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
-		this.links[f]=a;
-		let type=this.whatIs(a,b);
-		await this.pref;
-		try{
-			let rsp=fetch(a)
-			.then(c=>{
-				if(c.ok) return c.text();
-				throw new Error("Cannot fetch resource");
-			})
-			.then(d=>
-				this.handlers[type]({data: d, url: a},b)
-			);
-			this.loaded[a]=rsp;
-			return rsp;
-		}catch(e){
-			delete this.loaded[a];
-			throw e;
+	loadeps(a, b){
+		if(this.deps.hasOwnProperty(a)){
+			return this.load(this.deps[a], b);
 		}
+		return Promise.resolve();
+	}
+	getlink(d, b){
+		if(d.match(/^(((http|https|file):)|(\/\/))/)) return d;
+		if(this.defs.hasOwnProperty(d)) return this.defs[d];
+		if(b.includes("noprefix")) return new URL(d, location);
+		return new URL(this.props.prefix+d, location);
+	}
+	cachemgr(a, b){
+		if(b.includes("nocache")|| b.includes("force"))return undefined;
+		if(Object.keys(this.loaded).includes(a))return this.loaded[a];
+		return undefined;
 	}
 	whatIs(a, b){
 		if(typeof a=="object" && 'href' in a) a=a.href;
@@ -135,11 +126,11 @@ class loadlifyJS{
 		let res=b.filter(x=>x.match(reg));
 		if(res[0]) return res[0].match(reg)[2];
 		
-		if(a.match(/(.*\.js)/)){
+		if(a.match(/(.*\.js)/)!=null&&a.match(/(.*\.js)/)[0]==a){
 			return "js";
-		}else if(a.match(/(.*\.css)/)){
+		}else if(a.match(/(.*\.css)/)!=null&&a.match(/(.*\.css)/)[0]==a){
 			return "css";
-		}else if(a.match(/(.*\.(html)|(htm))/)){
+		}else if(a.match(/(.*\.(html)|(htm))/)==a){
 			return "html";
 		}else if(a.match(/(.*fonts.*)/)){
 			return "css"; //Fonts are loaded as css
@@ -182,21 +173,35 @@ let defaults={
 		materializeCSS: "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css",
 		materialize: "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js",
 		materialIcons: "https://fonts.googleapis.com/icon?family=Material+Icons",
+		["material-components-web"]: "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css",
+		["material-components-web-js"]: "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js",
 		socket_io: "https://unpkg.com/socket.io-client@latest/dist/socket.io.js",
 		sha256: "https://unpkg.com/js-sha256@latest/build/sha256.min.js",
 		AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
+		lightgalleryCSS: "https://unpkg.com/lightgallery.js@latest/dist/css/lightgallery.min.css",
+		["lightgallery-transitions"]: "https://unpkg.com/lightgallery.js@latest/dist/css/lg-transitions.min.css",
+		lightgallery: "https://unpkg.com/lightgallery.js@latest/dist/js/lightgallery.min.js",
+		["lightgallery-plugin-pager"]: "https://cdn.rawgit.com/sachinchoolur/lg-pager.js/master/dist/lg-pager.min.js",
+		["lightgallery-plugin-share"]: "https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.min.js",
+		["lightgallery-plugin-fullscreen"]: "https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.min.js",
+		["lightgallery-plugin-zoom"]: "https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.min.js",
+		["lightgallery-plugin-video"]: "https://cdn.rawgit.com/sachinchoolur/lg-video.js/master/dist/lg-video.min.js",
+		["lightgallery-plugin-thumbnail"]: "https://cdn.rawgit.com/sachinchoolur/lg-thumbnail.js/master/dist/lg-thumbnail.min.js",
 		listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
 		moment: "https://unpkg.com/moment@latest/moment.js",
-		zepto: "https://unpkg.com/zepto@1.2.0/dist/zepto.min.js",
-		fetch: "https://raw.githubusercontent.com/github/fetch/master/fetch.js"
+		zepto: "https://unpkg.com/zepto@latest/dist/zepto.min.js",
+		fetch: "https://raw.githubusercontent.com/github/fetch/master/fetch.js",
+		vue: "https://unpkg.com/vue@latest/dist/vue.min.js",
+		["vue-dev"]: "https://unpkg.com/vue@latest/dist/vue.js"
 	},
 	deps:{
 		vex: ["vexCSS", "vexTheme"],
 		jqueryUI: ["jqueryUICSS", loadlifyJS.optjQuery()],
 		materialize: ["materializeCSS", "materialIcons", loadlifyJS.optjQuery()],
 		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()],
+		lightgallery: ["lightgalleryCSS"]
 	},
 	flags: [],
 	properties:{
@@ -246,6 +251,7 @@ class RequireLayer{
 }
 (function(){
 	//Jump Loadlify to Global Scope
+	self.exports={};
 	self.loadlifyJS=loadlifyJS;
 	self.loadlify=new loadlifyJS({});
 	self.load=function(a, b){return self.loadlify.load(a, b)};

@@ -1,6 +1,6 @@
 {
   "name": "loadlify",
-  "version": "1.2.2",
+  "version": "2.1.1",
   "description": "Asynchronous loader for JS, CSS and Fonts",
   "main": "loadlify.min.js",
   "scripts": {
