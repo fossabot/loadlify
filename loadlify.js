@@ -185,7 +185,7 @@ let defaults={
 		["lightgallery-plugin-share"]: "https://cdn.rawgit.com/sachinchoolur/lg-share.js/master/dist/lg-share.min.js",
 		["lightgallery-plugin-fullscreen"]: "https://cdn.rawgit.com/sachinchoolur/lg-fullscreen.js/master/dist/lg-fullscreen.min.js",
 		["lightgallery-plugin-zoom"]: "https://cdn.rawgit.com/sachinchoolur/lg-zoom.js/master/dist/lg-zoom.min.js",
-		["lightgallery-plugin-video"]: "https://cdn.rawgit.com/sachinchoolur/lg-video.js/master/dist/lg-video.min.js"
+		["lightgallery-plugin-video"]: "https://cdn.rawgit.com/sachinchoolur/lg-video.js/master/dist/lg-video.min.js",
 		listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
