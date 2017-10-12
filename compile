@@ -1,0 +1,2 @@
+#!/bin/bash
+babel loadlify.js --minify -s true -o loadlify.min.js --compact true --no-comments
