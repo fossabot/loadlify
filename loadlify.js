@@ -29,7 +29,7 @@ class loadlifyJS{
 				if(b.includes("astag")){
 					let node=document.createElement("script");
 					node.setAttribute("data-src", a.url);
-					node.innerHTML=a.text;
+					node.innerHTML=a.data;
 					document.querySelector("head").appendChild(node);
 					return [document.querySelector("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
 				}else{
@@ -178,9 +178,9 @@ let defaults={
 		socket_io: "https://unpkg.com/socket.io-client@latest/dist/socket.io.js",
 		sha256: "https://unpkg.com/js-sha256@latest/build/sha256.min.js",
 		AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
-		lightgalleryCSS: "https://unpkg.com/lightgallery.js@1.0.1/dist/css/lightgallery.min.css",
-		["lightgallery-transitions"]: "https://unpkg.com/lightgallery.js@1.0.1/dist/css/lg-transitions.min.css",
-		lightgallery: "https://unpkg.com/lightgallery.js@1.0.1/dist/js/lightgallery.min.js",
+		lightgalleryCSS: "https://unpkg.com/lightgallery.js@latest/dist/css/lightgallery.min.css",
+		["lightgallery-transitions"]: "https://unpkg.com/lightgallery.js@latest/dist/css/lg-transitions.min.css",
+		lightgallery: "https://unpkg.com/lightgallery.js@latest/dist/js/lightgallery.min.js",
 		listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
