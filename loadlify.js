@@ -104,7 +104,7 @@ class loadlifyJS{
 	}
 	loadeps(a, b){
 		if(this.deps.hasOwnProperty(a)){
-			return this.load(this.deps[a]);
+			return this.load(this.deps[a], b);
 		}
 		return Promise.resolve();
 	}
