@@ -114,9 +114,9 @@ class loadlifyJS{
 		let res=b.filter(x=>x.match(reg));
 		if(res[0]) return res[0].match(reg)[2];
 		
-		if(a.match(/(.*\.js)/)[0]==a){
+		if(a.match(/(.*\.js)/)!=null&&a.match(/(.*\.js)/)[0]==a){
 			return "js";
-		}else if(a.match(/(.*\.css)/)[0]==a){
+		}else if(a.match(/(.*\.css)/)!=null&&a.match(/(.*\.css)/)[0]==a){
 			return "css";
 		}else if(a.match(/(.*\.(html)|(htm))/)==a){
 			return "html";
