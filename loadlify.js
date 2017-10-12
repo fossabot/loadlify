@@ -78,7 +78,7 @@ class loadlifyJS{
 		let cache=this.cachemgr(loading.link, b);
 		if(cache) return Promise.resolve(cache); //If URL is in cache, return cached response
 		
-		if(!b.includes("loadeps")){
+		if(!b.includes("nodeps")){
 			loading["deps"]=await this.loadeps(a, b);
 		}
 		loading["text"]=await fetch(loading.link).then(x=>{
@@ -107,62 +107,6 @@ class loadlifyJS{
 		if(Object.keys(this.loaded).includes(a))return this.loaded[a];
 		return undefined;
 	}
-// 	async load2(a, b){
-// 		if(b==undefined) b=[];
-// 		if(typeof b=="string") b=[b];
-// 		b.concat(this.flags);
-// 		if(!navigator.onLine && b.includes("force")!= false) throw new Error("OFFLINE!");
-// 		if(a==undefined) throw new Error("Undefined not allowed");
-// 		if(typeof a=="string"){
-// 			return await this.st1(a, b);
-// 		}else{
-// 			let todo=[];
-// 			a.forEach(c=>{
-// 				todo.push(this.st1(c, b));
-// 			});
-// 			return await Promise.all(todo);
-// 		}
-// 	}
-// 	async st1(a, b){
-// 		if(typeof a=="string"){
-// 			a=[a];
-// 		}
-// 		if(b.includes("nodeps") || this.deps[a]==undefined) return this.st2(a, b);
-// 		let rt= await this.load(this.deps[a], b);
-// 		let rt2=await this.st2(a, b);
-// 		return [rt, rt2];
-// 	}
-// 	async st2(a, b){
-// 		let c=[];
-// 		a.forEach(d=>{
-// 			if(d.match(/^(((http|https):)|(\/\/))/)) return c.push(this.st3(d, b,a));
-// 			if(this.defs.hasOwnProperty(d)) return c.push(this.st3(this.defs[d], b,a));
-// 			if(b.includes("noprefix")) return c.push(this.st3(new URL(d, location), b,a));
-// 			return c.push(this.st3(new URL(this.props.prefix+d, location), b,a));
-// 		});
-// 		return Promise.all(c);
-// 	}
-// 	async st3(a, b,f){
-// 		if(Object.keys(this.loaded).includes(a)&&(b.includes("nocache")!=true||b.includes("force")!=true)) return this.loaded.valueOf(a);
-// 		this.links[f]=a;
-// 		let type=this.whatIs(a,b);
-// 		await this.pref;
-// 		try{
-// 			let rsp=fetch(a)
-// 			.then(c=>{
-// 				if(c.ok) return c.text();
-// 				throw new Error("Cannot fetch resource");
-// 			})
-// 			.then(d=>
-// 				this.handlers[type]({data: d, url: a},b)
-// 			);
-// 			this.loaded[a]=rsp;
-// 			return rsp;
-// 		}catch(e){
-// 			delete this.loaded[a];
-// 			throw e;
-// 		}
-// 	}
 	whatIs(a, b){
 		if(typeof a=="object" && 'href' in a) a=a.href;
 		
@@ -170,11 +114,11 @@ class loadlifyJS{
 		let res=b.filter(x=>x.match(reg));
 		if(res[0]) return res[0].match(reg)[2];
 		
-		if(a.match(/(.*\.js)/)){
+		if(a.match(/(.*\.js)/)[0]==a){
 			return "js";
-		}else if(a.match(/(.*\.css)/)){
+		}else if(a.match(/(.*\.css)/)[0]==a){
 			return "css";
-		}else if(a.match(/(.*\.(html)|(htm))/)){
+		}else if(a.match(/(.*\.(html)|(htm))/)==a){
 			return "html";
 		}else if(a.match(/(.*fonts.*)/)){
 			return "css"; //Fonts are loaded as css
@@ -222,10 +166,9 @@ let defaults={
 		socket_io: "https://unpkg.com/socket.io-client@latest/dist/socket.io.js",
 		sha256: "https://unpkg.com/js-sha256@latest/build/sha256.min.js",
 		AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
-		photoswipe: "https://unpkg.com/photoswipe@latest/dist/photoswipe.css",
-		["photoswipe-skin"]: "https://unpkg.com/photoswipe@latest/dist/default-skin/default-skin.css",
-		photoswipeJS: "https://unpkg.com/photoswipe@4.1.2/dist/photoswipe.min.js",
-		["photoswipe-ui"]: "https://unpkg.com/photoswipe@4.1.2/dist/photoswipe-ui-default.min.js",
+		lightgalleryCSS: "https://unpkg.com/lightgallery.js@1.0.1/dist/css/lightgallery.min.css",
+		["lightgallery-transitions"]: "https://unpkg.com/lightgallery.js@1.0.1/dist/css/lg-transitions.min.css",
+		lightgallery: "https://unpkg.com/lightgallery.js@1.0.1/dist/js/lightgallery.min.js",
 		listJS: "//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js", //listJS no funciona con eval() https://github.com/javve/list.js/issues/528
 		typedJS: "https://raw.githubusercontent.com/mattboldt/typed.js/master/lib/typed.min.js",
 		openpgp: "https://unpkg.com/openpgp@latest/dist/openpgp.min.js",
@@ -240,7 +183,7 @@ let defaults={
 		jqueryUI: ["jqueryUICSS", loadlifyJS.optjQuery()],
 		materialize: ["materializeCSS", "materialIcons", loadlifyJS.optjQuery()],
 		bootstrap: ["bootstrapCSS", loadlifyJS.optjQuery()],
-		photoswipe: ["photoswipe-skin", "photoswipeJS", "photoswipe-ui"]
+		lightgallery: ["lightgalleryCSS"]
 	},
 	flags: [],
 	properties:{
