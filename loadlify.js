@@ -11,6 +11,15 @@ class loadlifyJS{
 		this.props=a.properties||defaults.properties;
 		this.handlers={
 			css: async function(a, b){
+				if(b.includes("astag")){
+					let node=document.createElement("link");
+					node.setAttribute("rel", "stylesheet");
+					node.setAttribute("type", "text/css");
+					node.setAttribute("data-loadlify", a.url);
+					node.setAttribute("href", a.url);
+					document.querySelector("head").appendChild(node);
+					return [a.data, {flags:b,url:a.url}];
+				}
 				let node=document.createElement("style");
 				node.innerText=a.data;
 				document.querySelector("head").appendChild(node);
@@ -18,8 +27,11 @@ class loadlifyJS{
 			},
 			js: async function(a, b){
 				if(b.includes("astag")){
-					document.querySelector("head").appendChild("<script data-src='"+a.url+"'>"+a.data+"</script>");
-					return [$("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
+					let node=document.createElement("script");
+					node.setAttribute("data-src", a.url);
+					node.innerHTML=a.text;
+					document.querySelector("head").appendChild(node);
+					return [document.querySelector("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
 				}else{
 					let c=new Function(a.data);
 					let d=c();
