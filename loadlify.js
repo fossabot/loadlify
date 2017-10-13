@@ -151,7 +151,7 @@ class loadlifyJS{
 	}
 	static optjQuery(){
 		if(typeof jQuery == "undefined"){
-			return "jQuery";
+			return "jquery";
 		}else{
 			return undefined;
 		}
@@ -159,7 +159,7 @@ class loadlifyJS{
 }
 let defaults={
 	defs:{
-		jQuery: "https://unpkg.com/jquery@latest/dist/jquery.min.js",
+		jquery: "https://unpkg.com/jquery@latest/dist/jquery.min.js",
 		bootstrap: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js",
 		bootstrapCSS: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
 		dexie: "https://unpkg.com/dexie@latest/dist/dexie.min.js",
@@ -169,6 +169,7 @@ let defaults={
 		fontAwesome: "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
 		vex: "https://raw.githubusercontent.com/HubSpot/vex/master/dist/js/vex.combined.min.js",
 		vexCSS: "https://raw.githubusercontent.com/HubSpot/vex/master/dist/css/vex.css",
+		requirejs: "https://unpkg.com/requirejs@latest/require.js",
 		vexTheme: "https://raw.githubusercontent.com/HubSpot/vex/master/dist/css/vex-theme-plain.css",
 		materializeCSS: "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css",
 		materialize: "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js",
@@ -209,46 +210,6 @@ let defaults={
 		suffix: ".js"
 	}
 };
-class RequireLayer{
-	constructor(a){
-		this.handler={
-			get: (tgt, name)=>{
-				return tgt[name];
-			},
-			set: (tgt, name, val)=>{
-				tgt[name]=val;
-				return (tgt[name]==val);
-			}
-		};
-		this.exports={};
-		self.exports=new Proxy(this.exports, this.handler);
-	}
-	require(a){
-		if(typeof a!="string") throw new Error("Only strings are supported");
-		if(this.exports[a]) return this.exports[a];
-		return this.loadModule(this.getUrl(a), a);
-	}
-	getUrl(d){
-		if(d.match(/^(((http|https):)|(\/\/))/)) return d;
-		if(loadlify.defs.hasOwnProperty(d)) return loadlify.defs[d];
-		return new URL(loadlify.props.prefix+d+loadlify.props.suffix, location);
-	}
-	loadModule(a, b){
-		console.warn("This function is not intended for production. Please, use loadlify.load one");
-		function* gen(a){
-			let req=new XMLHttpRequest();
-			req.open("GET", a, false);
-			req.send();
-			if(req.status!=200) throw new Error("Failed to load "+a+". Status: "+req.status);
-			let res=req.responseText;
-			res=new Function(res);
-			res();
-			return res;
-		}
-		let Z=gen(a).next().value;
-		return this.exports[b];
-	}
-}
 (function(){
 	//Jump Loadlify to Global Scope
 	if(!self.noExports){
@@ -257,6 +218,4 @@ class RequireLayer{
 	self.loadlifyJS=loadlifyJS;
 	self.loadlify=new loadlifyJS({});
 	self.load=function(a, b){return self.loadlify.load(a, b)};
-	//Require Layer (Experimental) Not suitable for production!
-// 	self.requireLayer=new RequireLayer();
 })();
