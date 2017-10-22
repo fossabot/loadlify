@@ -1,7 +1,7 @@
 {
   "name": "loadlify",
   "version": "2.1.4",
-  "description": "Asynchronous loader for JS, CSS and Fonts",
+  "description": "21 Century Web assets loader",
   "main": "loadlify.min.js",
   "scripts": {
     "test": "babel loadlify.js > /dev/null",
@@ -25,5 +25,6 @@
   "homepage": "https://github.com/mrvik/loadlify#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0"
-  }
+  },
+  "dependencies": {}
 }
