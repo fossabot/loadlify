@@ -123,6 +123,7 @@ class loadlifyJS{
 	}
 	loadeps(a, b){
 		if(this.deps.hasOwnProperty(a)){
+			if(b.includes("noflagsindeps")) b=undefined;
 			return this.load(this.deps[a], b);
 		}
 		return Promise.resolve();
