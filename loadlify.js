@@ -33,9 +33,28 @@ class loadlifyJS{
 					document.querySelector("head").appendChild(node);
 					return [document.querySelector("script[data-src='"+a.url+"']"), {flags: b,url:a.url}];
 				}else{
-					let c=new Function(a.data);
-					let d=c();
-					return [c, {rv:d,flags:b,url:a.url}];
+					let c,d,e,f,g;
+					c="";
+					if(b.includes("requirejs")){
+						let x=await load("requirejs", ["asplain"]);
+						c=x.text;
+						if(typeof(this.requireConfig)=="string"){
+							c+=this.requireConfig;
+						}
+					}
+					c+=a.data;
+					d=new Function(c);
+					try{
+						f=d();
+					}catch(x){
+						e=x;
+						console.warn("An error has ocurred on "+a.url);
+					}
+					g=[d, {rv:f,flags:b,url:a.url,err:e}];
+					if(g[1].err){
+						throw new Error(g);
+					}
+					return g;
 				}
 			},
 			html: async function(a, b){
