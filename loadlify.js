@@ -66,13 +66,12 @@ class loadlifyJS{
 		};
 	}
 	get add(){
-		let _this=this;
 		let a={
-			defs: function(_this, a){
-				return _this.defs[a.key, a.value];
+			defs: (a, b)=>{
+				return this.defs[a]=b;
 			},
-			deps: function(_this, a){
-				return _this.deps[a.key, a.value];
+			deps: (a, b)=>{
+				return this.deps[a]=b;
 			}
 		};
 		return a;
@@ -156,7 +155,7 @@ class loadlifyJS{
 			return "css"; //Fonts are loaded as css
 		}else{
 			console.warn("Unknown file: ", a);
-			return "unknown";
+			return "plain";
 		}
 	}
 	handlerctl(a){
