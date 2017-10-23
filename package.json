@@ -1,6 +1,6 @@
 {
   "name": "loadlify",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "21 Century Web assets loader",
   "main": "loadlify.min.js",
   "scripts": {
