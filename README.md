@@ -7,30 +7,30 @@ Fully customizable and simpe loader for web assets.
 
 The function `load`, declared in the global scope is a shorthand for `loadlify.load`
 This function has two arguments, one is mandatory:
-	````javascript
-		load(script, flags);
-		//The first argument can be an array or a string
-		//The second argument must be an array or undefined. This flags are inherited by default, but can be disabled
-		//The return is a promise and it's value is an array as defined below
-	````
+````javascript
+	load(script, flags);
+	//The first argument can be an array or a string
+	//The second argument must be an array or undefined. This flags are inherited by default, but can be disabled
+	//The return is a promise and it's value is an array as defined below
+````
 
 #### Return value
 The return value is like this:
 
-	````javascript
-		{
-			apply:[
-				constructedFunction(javascript)|textOfAsset(any other handler),
-				{
-					err: undefined|errorString,
-					flags: [flags used],
-					rv: return value from function (undefined is the most common),
-					url: url string from where the asset was loaded
-				}
-			],
-			deps:[dependencies loading object (the same structure)]
-		}
-	````
+````javascript
+	{
+		apply:[
+			constructedFunction(javascript)|textOfAsset(any other handler),
+			{
+				err: undefined|errorString,
+				flags: [flags used],
+				rv: return value from function (undefined is the most common),
+				url: url string from where the asset was loaded
+			}
+		],
+		deps:[dependencies loading object (the same structure)]
+	}
+````
 #### Examples
 
 - Load it with script tags
@@ -83,13 +83,15 @@ The `load` method has control over the load process. It loads the asset and call
     - `requirejs` Only JavaScript. Will put requireJS before the script
 
 #### The `loadlifyJS` class
-    - `loadlifyJS` variable contains the constructor. Customize your loader by constucting the class
-	- `loadlifyJS` will take from the object in the first parameter the config variables. The not supplied variables, will be taken from defults
-	````javascript
-    var loader=new loadlifyJS({
-		defs: yourOwnDefinitions,
-		deps: yourOwnScriptDependencies,
-		flags: yourDefaultFlags,
-		properties: yourOwnProperties
-	});
-	````
+
+- `loadlifyJS` variable contains the constructor. Customize your loader by constucting the class
+- `loadlifyJS` will take from the object in the first parameter the config values. The not supplied variables, will be taken from defults
+	
+````javascript
+var loader=new loadlifyJS({
+	defs: yourOwnDefinitions,
+	deps: yourOwnScriptDependencies,
+	flags: yourDefaultFlags,
+	properties: yourOwnProperties
+});
+````
