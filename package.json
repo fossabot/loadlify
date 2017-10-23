@@ -1,8 +1,8 @@
 {
   "name": "loadlify",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "21 Century Web assets loader",
-  "main": "loadlify.min.js",
+  "main": "loadlify.js",
   "scripts": {
     "test": "babel loadlify.js > /dev/null",
     "build": "babel --minified -o loadlify.min.js --no-comments loadlify.js -s true --compact true"
