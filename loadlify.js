@@ -195,6 +195,7 @@ let defaults={
 		materialIcons: "https://fonts.googleapis.com/icon?family=Material+Icons",
 		["material-components-web"]: "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css",
 		["material-components-web-js"]: "https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js",
+		["code-prettify"]: "https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js",
 		socket_io: "https://unpkg.com/socket.io-client@latest/dist/socket.io.js",
 		sha256: "https://unpkg.com/js-sha256@latest/build/sha256.min.js",
 		AES: "https://cdn.rawgit.com/ricmoo/aes-js/master/index.js",
