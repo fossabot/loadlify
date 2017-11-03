@@ -1,7 +1,7 @@
 {
   "name": "loadlify",
   "version": "2.3.0",
-  "description": "21 Century Web assets loader",
+  "description": "Loader for web assets and ES6 modules",
   "main": "loadlify.js",
   "scripts": {
     "test": "babel loadlify.js > /dev/null",
