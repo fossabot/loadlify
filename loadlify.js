@@ -42,6 +42,9 @@ class loadlifyJS{
 							c+=this.requireConfig;
 						}
 					}
+					if(b.includes("es6")){
+						let exports={};
+					}
 					c+=a.data;
 					d=new Function(c);
 					try{
@@ -52,7 +55,10 @@ class loadlifyJS{
 					}
 					g=[d, {rv:f,flags:b,url:a.url,err:e}];
 					if(g[1].err){
-						throw new Error(g);
+						throw g[1].err;
+					}
+					if(b.includes("es6")){
+						g[1]["exports"]=exports;
 					}
 					return g;
 				}
@@ -117,6 +123,7 @@ class loadlifyJS{
 		});
 		loading.type=this.whatIs(loading.link, b);
 		loading.apply=await this.handlers[loading.type]({data: loading.text, url: loading.link},b);
+		loading.exports=loading.apply[1].exports||{};
 		this.loaded[loading.link]=loading;
 		return loading;
 	}
