@@ -42,13 +42,14 @@ class loadlifyJS{
 							c+=this.requireConfig;
 						}
 					}
-					if(b.includes("es6")){
-						let exports={};
+					let exports={};
+					if(!b.includes("es6")){
+						exports=undefined;
 					}
 					c+=a.data;
-					d=new Function(c);
+					d=new Function(["exports"],c);
 					try{
-						f=d();
+						f=d(exports);
 					}catch(x){
 						e=x;
 						console.warn("An error has ocurred on "+a.url);
@@ -59,6 +60,9 @@ class loadlifyJS{
 					}
 					if(b.includes("es6")){
 						g[1]["exports"]=exports;
+						if(self.exports){
+							self.exports=Object.assign({}, self.exports, exports);
+						}
 					}
 					return g;
 				}
