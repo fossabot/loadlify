@@ -1,6 +1,6 @@
 {
   "name": "loadlify",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Loader for web assets and ES6 modules",
   "main": "loadlify.js",
   "scripts": {
