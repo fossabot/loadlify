@@ -1,6 +1,6 @@
 # Loadlify
 
-Fully customizable and simpe loader for web assets.
+Fully customizable and simpe loader for web assets with support for ES6 modules
 
 
 ## Basic usage
