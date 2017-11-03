@@ -103,6 +103,12 @@ class loadlifyJS{
 		if(typeof a=="string"&&a.match("file://")) this.prefetch(true);
 		await this.pref;
 		if(typeof a=="undefined") return Promise.resolve();
+		if(typeof b=="string"){
+			b=[b];
+		}else if(typeof b=="undefined"){
+			b=[];
+		}
+		b=b.concat(this.flags);
 		if(typeof b=="undefined") b=[];
 		if(typeof a=="object"){
 			let todo=[];
