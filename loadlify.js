@@ -42,9 +42,8 @@ class loadlifyJS{
 							c+=this.requireConfig;
 						}
 					}
-					let exports={};
-					if(!b.includes("es6")){
-						exports=undefined;
+					if(b.includes("es6")){
+						var exports={};
 					}
 					c+=a.data;
 					d=new Function(["exports"],c);
