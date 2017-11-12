@@ -43,7 +43,11 @@ class loadlifyJS{
 						}
 					}
 					if(b.includes("es6")){
-						var exports={};
+						if(typeof self.exports=="object"){
+							var exports=Object.assign({}, self.exports);
+						}else{
+							var exports={};
+						}
 					}
 					c+=a.data;
 					d=new Function(["exports"],c);
