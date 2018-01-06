@@ -1,4 +1,6 @@
 # Loadlify
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmrvik%2Floadlify.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmrvik%2Floadlify?ref=badge_shield)
+
 
 Fully customizable and simpe loader for web assets with support for ES6 modules
 
@@ -95,3 +97,7 @@ var loader=new loadlifyJS({
 	properties: yourOwnProperties
 });
 ````
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmrvik%2Floadlify.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmrvik%2Floadlify?ref=badge_large)
